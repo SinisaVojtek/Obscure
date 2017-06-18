@@ -12,26 +12,17 @@ namespace Obscure
     public class HidenFolder
     {
         public void createHiddenFolder(string path){
-            if (!Directory.Exists(path))
-            {
-                DirectoryInfo D = new DirectoryInfo(path);
-                D.Create();
-                D.Attributes |= FileAttributes.Hidden;
-                MessageBox.Show(String.Format("Kreirali ste novi skriveni folder na lokaciji: {0}", path));
-            }
-            else
-            {
-                DialogResult DR=MessageBox.Show("Folder sa tim imenom već postoji na toj lokaciji. Želite li ga sakriti", "Obscure", MessageBoxButtons.YesNo,MessageBoxIcon.Question);
+           
+                DialogResult DR=MessageBox.Show("Jeste li sigurni da želite sakriti odabrani folder?", "Obscure", MessageBoxButtons.YesNo,MessageBoxIcon.Question);
                 if (DR == DialogResult.Yes)
                 {
                     DirectoryInfo D = new DirectoryInfo(path);
                     D.Attributes |= FileAttributes.Hidden;
-                    MessageBox.Show("Traženi folder je sakriven.");
+                    MessageBox.Show("Traženi folder je sakriven.","Obscure",MessageBoxButtons.OK,MessageBoxIcon.Information);
                 }
-                else { }
 
-            }            
-        }      
+
+            }                 
     }
 
     public class ShowFolder {
@@ -147,12 +138,16 @@ namespace Obscure
             DialogResult DR = MessageBox.Show(String.Format("Jeste li sigurni da želite obrisati folder {0} ??", path), "Obscure", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (DR == DialogResult.Yes)
             {
-                Directory.Delete(path);
-                MessageBox.Show("Odabrani folder je obrisan.");
+                DialogResult DR2 = MessageBox.Show("Odabrani folder nije prazan, želite li obrisati sav sadržaj?", "Obscure", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (DR2 == DialogResult.Yes)
+                {
+                    Directory.Delete(path, true);
+                    MessageBox.Show("Odabrani folder i sav njegov sadržaj su obrisani.");
+                }
+                else { }
             }
             else { }
         }
-
     }
 
     public class FillDataGrid

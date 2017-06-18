@@ -170,9 +170,8 @@
             this.lblLokacija.AutoSize = true;
             this.lblLokacija.Location = new System.Drawing.Point(12, 128);
             this.lblLokacija.Name = "lblLokacija";
-            this.lblLokacija.Size = new System.Drawing.Size(47, 12);
+            this.lblLokacija.Size = new System.Drawing.Size(0, 12);
             this.lblLokacija.TabIndex = 5;
-            this.lblLokacija.Text = "xxxxxxx";
             // 
             // btnOdabirFoldera
             // 

@@ -4,13 +4,13 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Obscure
 {
     public class HidenFolder
     {
+        /*Klasa mijenja atribut odabranog foldera u Hidden (sakriva folder)*/
         public void createHiddenFolder(string path){
            
                 DialogResult DR=MessageBox.Show("Jeste li sigurni da želite sakriti odabrani folder?", "Obscure", MessageBoxButtons.YesNo,MessageBoxIcon.Question);
@@ -25,6 +25,7 @@ namespace Obscure
             }                 
     }
 
+    /*Klasa mijenja atribut foldera u Normal (folder više nije sakriven)*/
     public class ShowFolder {
 
         public void showFolder(string path)
@@ -39,6 +40,9 @@ namespace Obscure
         }
 
     }
+
+    /*Klasa zadužena za pretragu sadržaja foldera u potrazi za datotekama. Prolazi rekurzivno sadržaj foldera i 
+      izbacuje broj datoteka unutar foldera i svih podfoldera zajedno.*/
 
     public class SearchFiles
     {
@@ -59,6 +63,8 @@ namespace Obscure
         }
     }
 
+    /*Klasa zadužena za pretragu skrivenih foldera unutar odabrane lokacije.*/
+
     public class SearchHiddenFolders
     {
         public List<string> searchForHiddenFolders(string path)
@@ -78,6 +84,10 @@ namespace Obscure
             return folders;
         }
     }
+
+    /*Klasa zadužena za provjeru ispravnosti zadane putanje. U početku nisam koristio FolderBrowserDialog
+     već se putanja unosila ručno pa je bilo smisleno provjeravati putanju. Nakon implementacije FolderBrowser klase
+     to više nije nužno ali neka ostane kao dodatni nivo zaštite.*/
 
     class PathCheck
     {
@@ -112,6 +122,9 @@ namespace Obscure
 
     }
 
+    /*Klasa omogućava pretragu podatkovnog sustava i odabir lokacije kao i kreiranje novih foldera
+     na željenim lokacijama.*/
+
     public class FolderBrowser
     {
         public string folderBrowser()
@@ -131,6 +144,8 @@ namespace Obscure
         }
     }
 
+    /*Klasa zadužena za brisanje foldera i podataka unutar foldera.*/
+
     public class DeleteFolder
     {
         public void deleteFolder(string path)
@@ -138,17 +153,29 @@ namespace Obscure
             DialogResult DR = MessageBox.Show(String.Format("Jeste li sigurni da želite obrisati folder {0} ??", path), "Obscure", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (DR == DialogResult.Yes)
             {
-                DialogResult DR2 = MessageBox.Show("Odabrani folder nije prazan, želite li obrisati sav sadržaj?", "Obscure", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-                if (DR2 == DialogResult.Yes)
+                SearchFiles SR = new Obscure.SearchFiles();
+                List<string> list = new List<string>();
+
+                if (SR.showFiles(path, list).Count() > 0)
                 {
-                    Directory.Delete(path, true);
-                    MessageBox.Show("Odabrani folder i sav njegov sadržaj su obrisani.");
+                    DialogResult DR2 = MessageBox.Show("Odabrani folder nije prazan, želite li obrisati sav sadržaj?", "Obscure", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                    if (DR2 == DialogResult.Yes)
+                    {
+                        Directory.Delete(path, true);
+                        MessageBox.Show("Odabrani folder i sav njegov sadržaj su obrisani.");
+                    }
                 }
-                else { }
+                else
+                {
+                    Directory.Delete(path);
+                }
             }
             else { }
         }
     }
+
+    /*Klasa zadužena za popunjavanje GridView elemenata. Pošto ih u aplikaciji imamo dva, da bi izbjegli ponavljanje 
+     koda izdvojili smo funkcionalnost u zasebnu klasu.*/
 
     public class FillDataGrid
     {
@@ -157,7 +184,7 @@ namespace Obscure
             var popis = (from p in list select new { Text = p }).ToList();
             DG.DataSource = popis;
             DataGridViewColumn column = DG.Columns[0];
-            column.Width = 250;
+            column.Width = 300;
         }
 
     }

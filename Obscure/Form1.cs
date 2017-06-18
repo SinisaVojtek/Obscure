@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Obscure
@@ -17,29 +13,24 @@ namespace Obscure
             InitializeComponent();
         }
 
-        private void pictureBox1_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show("Odaberite lokaciju na kojoj želite kreirati vaš skriveni folder ili odaberite postojeći folder.", "Obscure", MessageBoxButtons.OK , MessageBoxIcon.Information);
-        }
-
         private void btKreirajFolder_Click(object sender, EventArgs e)
         {
 
-                HidenFolder H = new HidenFolder();
-                PathCheck PT = new PathCheck();
-                StringBuilder ST = new StringBuilder();
+            HidenFolder H = new HidenFolder();
+            PathCheck PT = new PathCheck();
+            StringBuilder ST = new StringBuilder();
 
-                ST.Append(lblLokacija.Text);
-                ST.Append("\\");
+            ST.Append(lblLokacija.Text);
+            ST.Append("\\");
 
-                if (PT.checkThePath(ST.ToString()) == true)
-                {
-                    H.createHiddenFolder(ST.ToString());
-                }
-                else
-                {
-                    MessageBox.Show("Neispravna putanja. Odaberite postojeći ili kreirajte novi folder.", "Obscure", MessageBoxButtons.OK,MessageBoxIcon.Error);
-                }
+            if (PT.checkThePath(ST.ToString()) == true)
+            {
+                H.createHiddenFolder(ST.ToString());
+            }
+            else
+            {
+                MessageBox.Show("Neispravna putanja. Odaberite postojeći ili kreirajte novi folder.", "Obscure", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void btPrikaziSkriveneFoldere_Click(object sender, EventArgs e)
@@ -76,7 +67,7 @@ namespace Obscure
 
         private void button1_Click(object sender, EventArgs e)
         {
-            FolderBrowser FB = new Obscure.FolderBrowser();
+            FolderBrowser FB = new FolderBrowser();
             lblLokacija.Text = FB.folderBrowser();
         }
 
@@ -113,17 +104,24 @@ namespace Obscure
         {
             DeleteFolder D = new DeleteFolder();
 
-            if (gbPopisSkrivenihFoldera.Visible == true)
+            try
             {
-                foreach (DataGridViewCell cell in dgView1.SelectedCells)
+                if (gbPopisSkrivenihFoldera.Visible == true)
                 {
-                    D.deleteFolder(cell.Value.ToString());
-                    btnPretraži_Click(sender, e);
+                    foreach (DataGridViewCell cell in dgView1.SelectedCells)
+                    {
+                        D.deleteFolder(cell.Value.ToString());
+                        btnPretraži_Click(sender, e);
+                    }
+                }
+                else
+                {
+                    btPrikaziSkriveneFoldere_Click(sender, e);
                 }
             }
-            else
+            catch (Exception ex)
             {
-                btPrikaziSkriveneFoldere_Click(sender, e);
+                MessageBox.Show(String.Format("Došlo je do pogreške: {0}", ex), "Obscure", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -135,31 +133,44 @@ namespace Obscure
 
             SearchFiles SF = new SearchFiles();
             List<string> files = new List<string>();
-
+       
             FillDataGrid FD = new FillDataGrid();
 
-            foreach (DataGridViewCell cell in dgView1.SelectedCells)
+            try
             {
-                if (SF.showFiles(cell.Value.ToString(), files).Count() == 0)
+                foreach (DataGridViewCell cell in dgView1.SelectedCells)
                 {
-                    MessageBox.Show("Odabrani folder ne sadrži niti jednu datoteku.", "Obscure", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    files = SF.showFiles(cell.Value.ToString(), files);
+                    if (files.Count() < 1)
+                    {
+                        MessageBox.Show("Odabrani folder ne sadrži niti jednu datoteku.", "Obscure", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    else
+                    {
+                        FD.fillDataGridWithData(files, dgView2);
+                    }
                 }
-                else
-                {
-                    FD.fillDataGridWithData(SF.showFiles(cell.Value.ToString(), files), dgView2);
-                }
+        }
+            catch (Exception ex)
+            {
+                MessageBox.Show(String.Format("Došlo je do pogreške: {0}", ex), "Obscure", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
-        }
-
+}
+       
         private void dgView1_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
         {
-                lblNum1.Text = dgView1.RowCount.ToString();
+            lblNum1.Text = dgView1.RowCount.ToString();
         }
 
         private void dgView2_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
         {
-                lblNum2.Text = dgView1.RowCount.ToString();
+            lblNum2.Text = dgView2.RowCount.ToString();
+        }
+
+        private void lblQuestionMark_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Odaberite lokaciju na kojoj želite kreirati folder ili odaberite postojeći folder.", "Obscure", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
     }
 }

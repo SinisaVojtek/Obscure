@@ -23,7 +23,7 @@ namespace Obscure
             ST.Append(lblLokacija.Text);
             ST.Append("\\");
 
-            if (PT.checkThePath(ST.ToString()) == true)
+            if (PT.checkThePath(ST.ToString()))
             {
                 H.createHiddenFolder(ST.ToString());
             }

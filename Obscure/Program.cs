@@ -16,9 +16,16 @@ namespace Obscure
                 DialogResult DR=MessageBox.Show("Jeste li sigurni da želite sakriti odabrani folder?", "Obscure", MessageBoxButtons.YesNo,MessageBoxIcon.Question);
                 if (DR == DialogResult.Yes)
                 {
-                    DirectoryInfo D = new DirectoryInfo(path);
-                    D.Attributes |= FileAttributes.Hidden;
-                    MessageBox.Show("Traženi folder je sakriven.","Obscure",MessageBoxButtons.OK,MessageBoxIcon.Information);
+                    if (!Directory.Exists(path))
+                    {
+                        MessageBox.Show("Neispravna putanja!", "Obscure", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                       else
+                    {
+                        DirectoryInfo D = new DirectoryInfo(path);
+                        D.Attributes |= FileAttributes.Hidden;
+                        MessageBox.Show("Traženi folder je sakriven.", "Obscure", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
                 }
 
 
@@ -156,18 +163,19 @@ namespace Obscure
                 SearchFiles SR = new Obscure.SearchFiles();
                 List<string> list = new List<string>();
 
-                if (SR.showFiles(path, list).Count() > 0)
+                if (SR.showFiles(path, list).Count() != 0)
                 {
                     DialogResult DR2 = MessageBox.Show("Odabrani folder nije prazan, želite li obrisati sav sadržaj?", "Obscure", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                     if (DR2 == DialogResult.Yes)
                     {
                         Directory.Delete(path, true);
-                        MessageBox.Show("Odabrani folder i sav njegov sadržaj su obrisani.");
+                        MessageBox.Show("Odabrani folder i sav njegov sadržaj su obrisani.","Obscure", MessageBoxButtons.OK,MessageBoxIcon.Information);
                     }
                 }
                 else
                 {
-                    Directory.Delete(path);
+                    Directory.Delete(path,true);
+                    MessageBox.Show("Odabrani folder je obrisan.","Obscure",MessageBoxButtons.OK,MessageBoxIcon.Information);
                 }
             }
             else { }
